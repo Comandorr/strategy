@@ -1,4 +1,5 @@
 #main
+# Прочитай ссылку про PEP8, реально
 import os
 class City:
 	def __init__(self, name, lvl, exp, units):
@@ -34,12 +35,14 @@ def create_city(name):
 	cities()
 
 def create_unit(n):
-	(cities_l[int(input("CITY "))-1]).units += int(n)
+	(cities_l[int(input("CITY "))-1]).units += int(n) # Зачем скобки?
 	cities()
 
 def turn():
 	gold += 100
 	turns += 1
+	# Почему не for city in cities_l?
+	# Уменьшает кол-во кода
 	for i in range(len(cities_l)):
 		city = cities_l[i]
 		city.exp += 30
