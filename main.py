@@ -7,7 +7,8 @@ class City:
 		self.lvl = lvl
 		self.exp = exp
 		self.units = units
-gold = 0
+
+gold = 100
 turns = 1
 cities_l = []
 cities_l.append(City("Capital", 1, 0, 0))
@@ -19,7 +20,7 @@ def commander():
 	elif command[:11] == "create city": create_city(command[12:])
 	elif command[:11] == "create unit": create_unit(command[12:])
 	elif command == "turn": turn()
-	else: commander()
+	else: cities()
 
 def cities():
 	os.system("clear")
@@ -35,16 +36,15 @@ def create_city(name):
 	cities()
 
 def create_unit(n):
-	(cities_l[int(input("CITY "))-1]).units += int(n) # Зачем скобки?
+	cities_l[int(input("CITY "))-1].units += int(n)
 	cities()
 
 def turn():
+	global gold
 	gold += 100
+	global turns
 	turns += 1
-	# Почему не for city in cities_l?
-	# Уменьшает кол-во кода
-	for i in range(len(cities_l)):
-		city = cities_l[i]
+	for city in cities_l:
 		city.exp += 30
 		if city.exp >= city.lvl*150:
 			city.exp -= city.lvl*150
