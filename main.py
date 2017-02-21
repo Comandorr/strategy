@@ -25,6 +25,7 @@ units_l.append(Unit('Soldier', 'Capital', 30, True))
 def commander():
 	command = input("INPUT ")
 	if command == "exit": ()
+        # Что с тобой не так? Что это за 8 пробелов? А? Нужно 4
 	elif command.split(' ')[0] == 'create':
 		if command.split(' ')[1] == 'unit': create_unit (int(command.split(' ')[2]))
 		elif command.split(' ')[1] == 'city': create_city(command.split(' ')[2])
@@ -33,12 +34,14 @@ def commander():
 
 def cities():
 	os.system("clear")
+        # Везде
 	for city in cities_l:
 		city.units = 0
 		for unit in units_l:
 			if city.name == unit.city:
 				city.units +=1
 
+        # Везде
 	for i in range(len(cities_l)):
 		city = cities_l[i]
 		print("{n}.  CITY {name} | LVL {lvl} | EXP {exp} OF {exp1} | UNITS {units}".format(n = i+1, name = city.name, lvl = city.lvl, exp = city.exp, exp1 = city.lvl*150, units = city.units))
@@ -52,6 +55,7 @@ def create_city(name):
 
 def create_unit(n):
 	global gold
+        # Везде
 	if gold < units_l[0].cost*n:
 		print('NOT ENOUGH GOLD')
 		commander()
