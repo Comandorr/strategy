@@ -26,16 +26,17 @@ units_l = []
 units_l.append(Unit('Soldier', 'Capital', 30, True))
 
 def commander():
-    command = input("INPUT ")
-    if command == "exit": ()
-    elif command.split(' ')[0] == 'create':
-        if command.split(' ')[1] == 'unit': create_unit(int(command.split(' ')[2]))
-        elif command.split(' ')[1] == 'city': create_city(command.split(' ')[2])
-    	else:
-    		input('CREATE WHAT???')
-    		commander()
-    elif command == "turn": turn()
-    else: cities()
+	command = input("INPUT ")
+	if command == "exit": ()
+	elif command.split(' ')[0] == 'create':
+		if command.split(' ')[1] == 'unit': create_unit(int(command.split(' ')[2]))
+		elif command.split(' ')[1] == 'city': create_city(command.split(' ')[2])
+		else:
+			input('CREATE WHAT???')
+			commander()
+	elif command == "turn": turn()
+	elif command == 'help': help()
+	else: cities()
 
 def cities():
     os.system("clear")
@@ -101,7 +102,8 @@ def turn():
 def help():
 	print('create city "name"')
 	print('create unit "number"')
-	ptint('turn')
+	print('turn')
 	input('exit')
-
+	cities()
+	
 cities()
