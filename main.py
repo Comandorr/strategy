@@ -28,23 +28,23 @@ units_l.append(Unit('Soldier', 'Capital', 30, True))
 def commander():
     command = input("INPUT ")
     if command == "exit": ()
-    # Что с тобой не так? Что это за 8 пробелов? А? Нужно 4
     elif command.split(' ')[0] == 'create':
         if command.split(' ')[1] == 'unit': create_unit(int(command.split(' ')[2]))
         elif command.split(' ')[1] == 'city': create_city(command.split(' ')[2])
+    	else:
+    		input('CREATE WHAT???')
+    		commander()
     elif command == "turn": turn()
     else: cities()
 
 def cities():
     os.system("clear")
-    # Везде
     for city in cities_l:
         city.units = 0
         for unit in units_l:
             if city.name == unit.city:
                 city.units +=1
 
-    # Везде
     """
     Этот цикл можно заменить на:
     for number, value in enumerate(cities_l):
@@ -64,14 +64,19 @@ def cities():
     commander()
 
 def create_city(name):
-    cities_l.append(City(name, 1, 0, 0))	
-    cities()
+	global gold
+	if gold >= 300:
+		cities_l.append(City(name, 1, 0, 0))
+		gold -= 300	
+	else:
+		print('NOT ENOUGH GOLD (300 NEED)')
+		commander()
+	cities()
 
 def create_unit(n):
     global gold
-    # Везде
     if gold < units_l[0].cost*n:
-        print('NOT ENOUGH GOLD')
+        print('NOT ENOUGH GOLD ({cost} NEED)'.format(cost = 30*n))
         commander()
     else:
         for i in range(n):
@@ -82,11 +87,6 @@ def create_unit(n):
     cities()
 
 def turn():
-    """
-    global не нужен в таком месте
-    Он нужен только если ты хочешь локальную(из функции) переменную
-    сделать видимой во всей программе, а turns и gold уже так являются глобальными
-    """
     global gold
     gold += 100
     global turns
@@ -97,5 +97,11 @@ def turn():
             city.exp -= city.lvl*150
             city.lvl += 1
     cities()
+
+def help():
+	print('create city "name"')
+	print('create unit "number"')
+	ptint('turn')
+	input('exit')
 
 cities()
