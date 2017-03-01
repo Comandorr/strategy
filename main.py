@@ -2,6 +2,8 @@
 # Прочитай ссылку про PEP8, реально
 import os
 
+FIRST = 1
+
 
 class City:
     def __init__(self, name, lvl, exp, hp, units):
@@ -33,12 +35,12 @@ units_l.append(Unit('REALLY BADASS SOLDIER', '', 75, 90, 90, True))
 
 
 def commander():
-    command = input("INPUT ")
+    command = input("INPUT > ")
     if command == "exit":
         exit(1)
-    elif command == 'create unit':
+    elif 'create unit' in command:
         create_unit()
-    elif command == 'create city':
+    elif 'create city' in command:
         if len(command.split(' ')) == 3:
             create_city(command.split(' ')[2])
         else:
@@ -54,7 +56,10 @@ def commander():
 
 
 def cities():
-    os.system("clear")
+    global FIRST
+    if FIRST != 0:
+        os.system("clear")
+        FIRST = 0
     for city in cities_l:
         city.units = 0
         for unit in units_l:
@@ -105,7 +110,7 @@ def help_command():
     print('create city [CITY NAME] - create new city')
     print('create unit [UNIT NUMBER] [NUMBER OF UNITS] - create one or more units in city')
     print('turn - next turn')
-    input("press any button to close help...")
+    print('exit - quit the game\n')
     cities()
 
 
