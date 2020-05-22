@@ -1,8 +1,7 @@
 import sys
 import json
-import PyQt5 as pyqt
+#import PyQt5.QtCore as qcore
 import PyQt5.QtWidgets as qwidgets
-import PyQt5.QtCore as qcore
 
 app = qwidgets.QApplication([])
 window = qwidgets.QWidget()
@@ -10,18 +9,18 @@ window.resize(600, 400)
 window.setWindowTitle("Smart Notes")
 
 
-button1 = qwidgets.QPushButton("Save")
+button_save = qwidgets.QPushButton("Save")
 edit1 = qwidgets.QLineEdit()
 text1 = qwidgets.QTextEdit()
 button2 = qwidgets.QPushButton("Load")
-button3 = qwidgets.QPushButton("New")
+button_new = qwidgets.QPushButton("New")
 list1 = qwidgets.QListWidget()
 
 h1_line = qwidgets.QHBoxLayout()
 h1_line.addWidget(edit1)
-h1_line.addWidget(button1)
+h1_line.addWidget(button_save)
 h1_line.addWidget(button2)
-h1_line.addWidget(button3)
+h1_line.addWidget(button_new)
 
 right_line = qwidgets.QVBoxLayout()
 right_line.addLayout(h1_line)
@@ -36,18 +35,15 @@ main_line.addLayout(right_line)
 
 notes = {}
 
+
 def save():
     global notes
     if len(text1.toPlainText()) != 0:
-        print("saved!")
-        with open("notes.json", 'r') as file:
-            notes = json.load(file)
         body = text1.toPlainText()
         name = edit1.text()
-        if edit1.text() == '':
+        if not len(edit1.text()):
             name = "untitled"
         notes[name] = body
-        print(name, notes[name])
         with open("notes.json", 'w') as file:
             json.dump(notes, file)
         list1.clear()
@@ -56,7 +52,8 @@ def save():
     for i in list1.selectedItems():
         i.setSelected(0)
 
-button1.clicked.connect(save)
+button_save.clicked.connect(save)
+
 
 def new():
     global notes
@@ -65,10 +62,11 @@ def new():
     edit1.clear()
     for i in list1.selectedItems():
         i.setSelected(0)
-button3.clicked.connect(new)
+
+button_new.clicked.connect(new)
 
 
-def load2():
+def load():
     global notes
     text1.clear()
     edit1.clear()
@@ -76,22 +74,14 @@ def load2():
     edit1.setText(item)
     text1.setText(notes[item])
 
+list1.itemSelectionChanged.connect(load)
 
-list1.itemSelectionChanged.connect(load2)
-'''
-ready = True
+
 with open("notes.json", 'r') as file:
-    if len(file.read()) == 0:
-        ready = False
-
-with open("notes.json", 'w') as file:
-    if not ready:
-        json.dump({},file)
-'''
-with open("notes.json", 'r') as r_file:
-    notes = json.load(r_file)
+    if len(file.read()):
+        file.seek(0)
+        notes = json.load(file)
     list1.addItems(notes)
-
 
 
 window.setLayout(main_line)
