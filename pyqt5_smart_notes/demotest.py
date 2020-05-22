@@ -34,41 +34,32 @@ main_line = qwidgets.QHBoxLayout()
 main_line.addLayout(left_line)
 main_line.addLayout(right_line)
 
+notes = {}
 
 def save():
+    global notes
     if len(text1.toPlainText()) != 0:
+        print("saved!")
         with open("notes.json", 'r') as file:
             notes = json.load(file)
-            body = text1.toPlainText()
-            name = edit1.text()
-            if edit1.text() == '':
-                name = "untitled"
-            notes[name] = body
+        body = text1.toPlainText()
+        name = edit1.text()
+        if edit1.text() == '':
+            name = "untitled"
+        notes[name] = body
+        print(name, notes[name])
         with open("notes.json", 'w') as file:
             json.dump(notes, file)
         list1.clear()
-        for note in notes:
-            list1.addItem(note)
+        list1.addItems(notes)
 
     for i in list1.selectedItems():
         i.setSelected(0)
 
 button1.clicked.connect(save)
 
-'''
-def load():
-    text1.clear()
-    edit1.clear()
-    with open("notes.json", 'r') as file:
-        notes = json.load(file)
-        for note in notes:
-            text1.setText(text1.toPlainText()+notes[note]+'\n')
-            edit1.setText(edit1.text()+note)
-
-button2.clicked.connect(load)
-'''
-
 def new():
+    global notes
     save()
     text1.clear()
     edit1.clear()
@@ -78,24 +69,29 @@ button3.clicked.connect(new)
 
 
 def load2():
+    global notes
     text1.clear()
     edit1.clear()
     item = list1.currentItem().text()
-    print(item)
-    text1.setText(notes[item])
     edit1.setText(item)
+    text1.setText(notes[item])
+
 
 list1.itemSelectionChanged.connect(load2)
+'''
+ready = True
+with open("notes.json", 'r') as file:
+    if len(file.read()) == 0:
+        ready = False
 
+with open("notes.json", 'w') as file:
+    if not ready:
+        json.dump({},file)
+'''
+with open("notes.json", 'r') as r_file:
+    notes = json.load(r_file)
+    list1.addItems(notes)
 
-with open("notes.json") as r_file:
-    if len(r_file.read()) == 0:
-        with open("notes.json", 'w') as file:
-            json.dump({}, file)
-    notes = {}
-    data = json.load(r_file)
-    for note in notes:
-        list1.addItem(note)
 
 
 window.setLayout(main_line)
