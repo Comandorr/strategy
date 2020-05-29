@@ -1,5 +1,4 @@
-import sys
-import json
+import sys, json
 #import PyQt5.QtCore as qcore
 import PyQt5.QtWidgets as qwidgets
 

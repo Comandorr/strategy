@@ -58,7 +58,7 @@ def commander():
 def cities():
     global FIRST
     if FIRST != 0:
-        os.system("clear")
+        os.system("cls")
         FIRST = 0
     for city in cities_l:
         city.units = 0
