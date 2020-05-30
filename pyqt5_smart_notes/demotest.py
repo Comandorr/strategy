@@ -1,10 +1,9 @@
-import sys, json
-#import PyQt5.QtCore as qcore
+import json
 import PyQt5.QtWidgets as qwidgets
 
 app = qwidgets.QApplication([])
 window = qwidgets.QWidget()
-window.resize(600, 400)
+window.resize(800, 600)
 window.setWindowTitle("Smart Notes")
 
 
@@ -51,6 +50,7 @@ def save():
     for i in list1.selectedItems():
         i.setSelected(0)
 
+
 button_save.clicked.connect(save)
 
 
@@ -62,6 +62,7 @@ def new():
     for i in list1.selectedItems():
         i.setSelected(0)
 
+
 button_new.clicked.connect(new)
 
 
@@ -72,6 +73,7 @@ def load():
     item = list1.currentItem().text()
     edit1.setText(item)
     text1.setText(notes[item])
+
 
 list1.itemSelectionChanged.connect(load)
 
