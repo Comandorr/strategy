@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QTextEdit, QPushButton, QVBoxLayout, QHBoxLayout
-from PyQt5.QtCore import Qt
-
+from PyQt5.QtCore import Qt, QTimer
 
 app = QApplication([])
+
+timer = QTimer()
 
 lbl_title = QLabel("Тест Руфье\n")
 
@@ -20,9 +21,10 @@ edt_pulse1 = QLineEdit()
 edt_pulse2 = QLineEdit()
 edt_pulse3 = QLineEdit()
 
-edt_help = QTextEdit("ИНСТРУКЦИЯ")
+edt_help = QTextEdit()
+edt_help.setText("ИНСТРУКЦИЯ\n\nЧтобы приступить к тесту, нажмите 'начать'")
 lbl_timer = QLabel("--:--")
-btn_ok = QPushButton("Продолжить")
+btn_ok = QPushButton("Начать")
 
 
 l_main = QVBoxLayout()
@@ -69,66 +71,99 @@ l_stels.addWidget(QLabel("\n"))
 l_main.addLayout(l_stels)
 l_main.addLayout(l_h_bot)
 
-
-stage = 0
-def click():
-    global stage
-    stage += 1
-    if stage == 1: # начало первого измерения
+t=10
+def tick():
+    global t
+    if t>=0:
+        if t >=10:
+            lbl_timer.setText("00:"+str(t))
+        else:
+            lbl_timer.setText("00:0"+str(t))
+        t-=1
+    if t<0:
+        lbl_timer.setText("время вышло")
         edt_help.setText("ИНСТРУКЦИЯ\n"
-                         + "\nЛожитесь и отдыхайте в течение 5 минут"
-                         + "\nПо прошествии этого времени измерьте свой пульс и впишите его поле 1"
-                         + "\nКак будете готовы, нажмите 'Продолжить'"
-                         )
-    elif stage == 2: # инструкция перед приседаниями
-        edt_help.setText("ИНСТРУКЦИЯ\n"
-                         + "\nСейчас вам предстоит выполнить 30 приседаний за 45 секунд"
-                         + "\nТаймер ниже будет отсчитывать время"
-                         + "\nНажмите 'Продолжить', как будете готовы приступить"
-                         )
-    elif stage == 3: # после приседаний
-        edt_help.setText("ИНСТРУКЦИЯ\n"
-                         + "\nЛожитесь и замерьте пульс в первые 15 секунд"
-                         + "\nСпустя 30 секунд после первого измерения измерьте его еще раз"
+                         + "\nЛожитесь и замерьте пульс за первые 15 секунд"
+                         + "\nСпустя 30 секунд после первого измерения измерьте его еще за 15 секунд"
                          + "\nВпишите результаты в поля 2 и 3"
                          + "\nПосле нажмите 'Продолжить', чтобы рассчитать результат"
                          )
-    elif stage == 4: # финал
-        p1 = int(edt_pulse1.text())
-        p2 = int(edt_pulse2.text())
-        p3 = int(edt_pulse3.text())
-        age = int(edt_age.text())
+        timer.stop()
 
-        index = ((4 * (p1 + p2 + p3)) - 200)/10
 
-        if age >= 15:
-            start = 0
-        elif 13 <=  age <= 14:
-            start = 1.5
-        elif 11 <= age <= 12:
-            start = 3
-        elif 9 <= age <= 10:
-            start = 4.5
-        elif 7 <= age <= 8:
-            start = 6
+stage = 0
+def click():
+    global t, stage
+    try:
+        if stage == 0: # начало первого измерения
+            edt_help.setText("ИНСТРУКЦИЯ\n"
+                             + "\nЛожитесь и отдыхайте в течение 5 минут"
+                             + "\nПо прошествии этого времени посчитайте свой пульс за 15 секунд и впишите его поле 1"
+                             + "\nКак будете готовы, нажмите 'Продолжить'"
+                             )
+            btn_ok.setText("Продолжить")
 
-        diff = index - start
+        elif stage == 1: # инструкция перед приседаниями
+            edt_help.setText("ИНСТРУКЦИЯ\n"
+                             + "\nСейчас вам предстоит выполнить 30 приседаний за 45 секунд"
+                             + "\nТаймер ниже будет отсчитывать время"
+                             + "\nПеред тем как начать, заполните поле 'возраст'"
+                             + "\nНажмите 'Продолжить', как будете готовы приступить"
+                             )
+            p1 = int(edt_pulse1.text())
+            if p1 <= 0: 1/0
 
-        if diff < 0.5:
-            level = "высокий"
-        elif 0.5 <= diff <= 5:
-            level = "выше среднего"
-        elif 5 < diff <= 10:
-            level = "средний"
-        elif 10 < diff <= 15:
-            level = "удовлетворительный"
-        elif diff > 15:
-            level = "низкий"
+        elif stage == 2: # после приседаний
 
-        edt_help.setText("Результат\n"
-                         + "\nВаш индекс Руфье равен " + str(index)
-                         + "\nДля вашего возраста это  уровень '" + level + "'"
-                         )
+            timer.timeout.connect(tick)
+            timer.start(1000)
+
+            age = int(edt_age.text())
+            if age <= 0: 1/0
+
+        elif stage >= 3 and t < 0: # финал
+            lbl_timer.setText("--:--")
+            p1 = int(edt_pulse1.text())
+            p2 = int(edt_pulse2.text())
+            p3 = int(edt_pulse3.text())
+            age = int(edt_age.text())
+            if p1 <= 0 or p2 <= 0: 1/0
+            index = ((4 * (p1 + p2 + p3)) - 200)/10
+
+            if age >= 15:
+                start = 0
+            elif 13 <=  age <= 14:
+                start = 1.5
+            elif 11 <= age <= 12:
+                start = 3
+            elif 9 <= age <= 10:
+                start = 4.5
+            elif 7 <= age <= 8:
+                start = 6
+
+            diff = index - start
+
+            if diff < 0.5:
+                level = "высокий"
+            elif 0.5 <= diff <= 5:
+                level = "выше среднего"
+            elif 5 < diff <= 10:
+                level = "средний"
+            elif 10 < diff <= 15:
+                level = "удовлетворительный"
+            elif diff > 15:
+                level = "низкий"
+
+            edt_help.setText("Результат\n"
+                             + "\nВаш индекс Руфье равен " + str(index)
+                             + "\nДля вашего возраста это  уровень '" + level + "'"
+                             )
+
+        stage += 1
+    except:
+            edt_help.setText("ОШИБКА\n"
+                             + "\nДанные введены некорректно"
+                             + "\nПроверьте их правильность и попробуйте снова")
 
 btn_ok.clicked.connect(click)
 
